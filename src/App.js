@@ -6,11 +6,21 @@ const initialItems = [
 ];
 
 export default function App() {
+  const [items, setItems] = useState(initialItems);
+
+  function handelAddItem(item) {
+    setItems((items) => [...items, item]);
+  }
+
+  function handeRemoveItem(id) {
+    setItems((oldItems) => oldItems.filter((item) => item.id !== id));
+  }
+
   return (
     <div className="app">
       <Logo />
-      <Form />
-      <PackingList />
+      <Form handelAddItem={handelAddItem} />
+      <PackingList items={items} handeRemoveItem={handeRemoveItem} />
       <Stats />
     </div>
   );
@@ -20,7 +30,7 @@ function Logo() {
   return <h1>🏝️ Far Away 😎</h1>;
 }
 
-function Form() {
+function Form({ handelAddItem }) {
   const [description, setdescription] = useState("");
   const [quantity, setquantity] = useState(1);
 
@@ -29,7 +39,7 @@ function Form() {
 
     if (!description) return;
     const newItem = { description, quantity, id: Date.now(), packed: false };
-    console.log(newItem);
+    handelAddItem(newItem);
     setdescription("");
     setquantity(1);
   }
@@ -56,25 +66,25 @@ function Form() {
   );
 }
 
-function PackingList() {
+function PackingList({ items, handeRemoveItem }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => (
-          <Item item={item} key={item.id} />
+        {items.map((item) => (
+          <Item item={item} key={item.id} handeRemoveItem={handeRemoveItem} />
         ))}
       </ul>
     </div>
   );
 }
 
-function Item({ item }) {
+function Item({ item, handeRemoveItem }) {
   return (
     <li>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
-      <button>✖️</button>
+      <button onClick={() => handeRemoveItem(item.id)}>✖️</button>
     </li>
   );
 }
