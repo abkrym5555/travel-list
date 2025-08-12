@@ -1,12 +1,7 @@
 import { useState } from "react";
 
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: true },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-];
-
 export default function App() {
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState([]);
 
   function handelAddItem(item) {
     setItems((items) => [...items, item]);
@@ -16,12 +11,24 @@ export default function App() {
     setItems((oldItems) => oldItems.filter((item) => item.id !== id));
   }
 
+  function handeCheckItem(id) {
+    setItems((oldItems) =>
+      oldItems.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
+
   return (
     <div className="app">
       <Logo />
       <Form handelAddItem={handelAddItem} />
-      <PackingList items={items} handeRemoveItem={handeRemoveItem} />
-      <Stats />
+      <PackingList
+        items={items}
+        handeRemoveItem={handeRemoveItem}
+        handeCheckItem={handeCheckItem}
+      />
+      <Stats items={items} />
     </div>
   );
 }
@@ -66,21 +73,32 @@ function Form({ handelAddItem }) {
   );
 }
 
-function PackingList({ items, handeRemoveItem }) {
+function PackingList({ items, handeRemoveItem, handeCheckItem }) {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
-          <Item item={item} key={item.id} handeRemoveItem={handeRemoveItem} />
+          <Item
+            item={item}
+            key={item.id}
+            handeRemoveItem={handeRemoveItem}
+            handeCheckItem={handeCheckItem}
+          />
         ))}
       </ul>
     </div>
   );
 }
 
-function Item({ item, handeRemoveItem }) {
+function Item({ item, handeRemoveItem, handeCheckItem }) {
   return (
     <li>
+      <input
+        name="check"
+        type="checkbox"
+        value={item.packed}
+        onChange={() => handeCheckItem(item.id)}
+      ></input>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
@@ -89,10 +107,26 @@ function Item({ item, handeRemoveItem }) {
   );
 }
 
-function Stats() {
+function Stats({ items }) {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>start add item to go ❤️‍🔥</em>
+      </p>
+    );
+
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed === true).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
+
   return (
     <footer className="stats">
-      <em>you have x items in your list , and you already packed x (x%)</em>
+      <em>
+        {percentage === 100
+          ? "You are ready to go ✈️"
+          : `you have ${numItems} items in your list , and you already packed
+        ${numPacked}(${percentage}%)`}
+      </em>
     </footer>
   );
 }
