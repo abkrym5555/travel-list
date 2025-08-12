@@ -18,7 +18,9 @@ export default function App() {
       )
     );
   }
-
+  function handelClearList() {
+    if (window.confirm("do you want to remove you list?")) setItems([]);
+  }
   return (
     <div className="app">
       <Logo />
@@ -27,6 +29,7 @@ export default function App() {
         items={items}
         handeRemoveItem={handeRemoveItem}
         handeCheckItem={handeCheckItem}
+        handelClearList={handelClearList}
       />
       <Stats items={items} />
     </div>
@@ -73,7 +76,12 @@ function Form({ handelAddItem }) {
   );
 }
 
-function PackingList({ items, handeRemoveItem, handeCheckItem }) {
+function PackingList({
+  items,
+  handeRemoveItem,
+  handeCheckItem,
+  handelClearList,
+}) {
   const [sortBy, setSortBy] = useState("input");
   let sortItems;
   if (sortBy === "input") sortItems = items;
@@ -105,6 +113,7 @@ function PackingList({ items, handeRemoveItem, handeCheckItem }) {
           <option value="description">sort by description</option>
           <option value="packed">sort by packed</option>
         </select>
+        <button onClick={handelClearList}>clear</button>
       </div>
     </div>
   );
