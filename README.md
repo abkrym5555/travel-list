@@ -1,5 +1,7 @@
 # simple travel-list proj
 
+- a simple app to grab the all items u need to pack for a trip
+
 - make this with basic react and learn how deal more with hook 'useState()'
 
 Live Link : https://travellisttt.netlify.app/
